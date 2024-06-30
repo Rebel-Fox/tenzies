@@ -52,7 +52,6 @@ main{
   gap:1.125em;
   flex-wrap: wrap;
   margin: 1.9em 0 1.6em;
-  
 }
 
 button{
@@ -62,15 +61,12 @@ button{
 .box{
   height: 36px;
   width: 36px;
-  font-size: 1.28rem;
-  font-weight: 700;
+  /* font-weight: 700; */
   background-color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   border-radius: 5px;
   box-shadow: 2px 2px #E5E5E5;
   border: none;
+  padding: 0;
 }
 
 .held{
