@@ -36,6 +36,7 @@ p{
 }
 
 main{
+  position: relative;
   max-width: 320px;
   min-height: 320px;
   background-color:#F5F5F5 ;
@@ -88,4 +89,21 @@ button{
 button:active{
   position: relative;
   top: 1px;
+}
+
+.counter,
+.timer,
+.highscore{
+  position: absolute;
+  top: 3px;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.counter{
+  left: 6px;
+}
+
+.timer{
+  right: 6px;
 }
