@@ -1,105 +1,113 @@
-import React from 'react'
-import Die from './Components/Die'
-import { nanoid } from 'nanoid'
-import Confetti from 'react-confetti'
+import React from "react";
+import Die from "./Components/Die";
+import { nanoid } from "nanoid";
+import Confetti from "react-confetti";
+// import useWindowSize from "react-use/lib/useWindowSize";
 
 export default function App() {
+  const highscore = JSON.parse(localStorage.getItem("Highscore"));
 
-  const highscore = JSON.parse(localStorage.getItem('Highscore'))
+  const [numArr, setNumArr] = React.useState(allNewDice());
 
-  const [numArr, setNumArr] = React.useState(allNewDice())
+  const [tenzies, setTenzies] = React.useState(false);
 
-  const [tenzies, setTenzies] = React.useState(false)
+  const [numRoll, setNumRoll] = React.useState(0);
 
-  const [numRoll, setNumRoll] = React.useState(0)
-
-  const [time, setTime] = React.useState(0)
+  const [time, setTime] = React.useState(0);
   React.useEffect(() => {
-    const numValue = numArr[0].value
-    const isAllHeld = numArr.every(num => num.isHeld) // this returns a boolean
-    const isAllEqual = numArr.every(num => num.value === numValue)
+    const numValue = numArr[0].value;
+    const isAllHeld = numArr.every((num) => num.isHeld); // this returns a boolean
+    const isAllEqual = numArr.every((num) => num.value === numValue);
     if (isAllHeld && isAllEqual) {
-      setTenzies(true)
+      setTenzies(true);
     }
-  }, [numArr])
+  }, [numArr]);
 
   React.useEffect(() => {
-    let timer
-    if(!tenzies){
-      timer =setInterval(() => setTime(prevTime => prevTime + 1),1000)
-    }else{
-      clearInterval(timer)
+    let timer;
+    if (!tenzies) {
+      timer = setInterval(() => setTime((prevTime) => prevTime + 1), 1000);
+    } else {
+      clearInterval(timer);
     }
-    return () => clearInterval(timer)
-  },[tenzies])
+    return () => clearInterval(timer);
+  }, [tenzies]);
 
   function newDice() {
-    const randomNum = Math.floor(Math.random() * 6) + 1
+    const randomNum = Math.floor(Math.random() * 6) + 1;
     return {
       value: randomNum,
       isHeld: false,
-      id: nanoid()
-    }
+      id: nanoid(),
+    };
   }
 
   function allNewDice() {
-    const randomNumArr = []
+    const randomNumArr = [];
     for (let i = 0; i < 10; i++) {
-      randomNumArr.push(newDice())
+      randomNumArr.push(newDice());
     }
-    return randomNumArr
+    return randomNumArr;
   }
-
 
   function holdDice(id) {
-    console.log(id)
-    setNumArr(oldNumArr =>
-      oldNumArr.map(oldNum =>
-        oldNum.id === id ?
-          { ...oldNum, isHeld: !oldNum.isHeld } : oldNum))
+    console.log(id);
+    setNumArr((oldNumArr) =>
+      oldNumArr.map((oldNum) =>
+        oldNum.id === id ? { ...oldNum, isHeld: !oldNum.isHeld } : oldNum
+      )
+    );
   }
 
-  const numElements = numArr.map(numElement =>
-    <Die key={numElement.id}
+  const numElements = numArr.map((numElement) => (
+    <Die
+      key={numElement.id}
       value={numElement.value}
       isHeld={numElement.isHeld}
       holdDice={() => holdDice(numElement.id)}
-    />)
+    />
+  ));
 
   function generateNewNumArr() {
     if (tenzies) {
       if (highscore) {
         if (highscore > numRoll) {
-          localStorage.setItem('Highscore', JSON.stringify(numRoll))
+          localStorage.setItem("Highscore", JSON.stringify(numRoll));
         }
       } else {
-        localStorage.setItem('Highscore', JSON.stringify(numRoll))
+        localStorage.setItem("Highscore", JSON.stringify(numRoll));
       }
 
-      setTenzies(false)
-      setNumArr(allNewDice())
-      setNumRoll(0)
-      setTime(0)
+      setTenzies(false);
+      setNumArr(allNewDice());
+      setNumRoll(0);
+      setTime(0);
     } else {
-      setNumRoll(prevNumRoll => prevNumRoll + 1)
-      setNumArr(oldNumArr => oldNumArr.map(oldNum => oldNum.isHeld ? oldNum : newDice()))
+      setNumRoll((prevNumRoll) => prevNumRoll + 1);
+      setNumArr((oldNumArr) =>
+        oldNumArr.map((oldNum) => (oldNum.isHeld ? oldNum : newDice()))
+      );
     }
   }
 
-
+  // const { width, height } = useWindowSize();
   return (
+    <>
     <main>
-
-        <span className='counter'>Roll: {numRoll}</span>
-        {highscore && <span className='highscore'>Highscore:{highscore}</span>}
-        {time!==0 && <span className='timer'>{time}s</span>}
+      <span className="counter">Roll: {numRoll}</span>
+      {highscore && <span className="highscore">Highscore:{highscore}</span>}
+      {time !== 0 && <span className="timer">{time}s</span>}
       <h1>Tenzies</h1>
-      <p>Roll until all dice are the same. Click each die to freeze it at its current value between rolls.</p>
-      <div className="boxes">
-        {numElements}
-      </div>
-      <button className='roll-btn' onClick={generateNewNumArr}>{tenzies ? 'New Game' : 'Roll'}</button>
-      {tenzies && <Confetti />}
+      <p>
+        Roll until all dice are the same. Click each die to freeze it at its
+        current value between rolls.
+      </p>
+      <div className="boxes">{numElements}</div>
+      <button className="roll-btn" onClick={generateNewNumArr}>
+        {tenzies ? "New Game" : "Roll"}
+      </button>
     </main>
-  )
+      {tenzies && <Confetti className="confetti" />}
+    </>
+  );
 }
